@@ -6,6 +6,8 @@
         <option value="all" selected>All</option>
         <option value="test" selected>test</option>
       </select>
+      <!-- <input class="form-control" @keyup="searchTitleMethod" v-model="searchTitle" type="search" placeholder="Search Title" aria-label="Search">
+      <input class="form-control" @keyup="searchTitleMethod" v-model="searchPrice" type="number" placeholder="Search Price" aria-label="Search"> -->
     </label>
     <h1>SELECTED FILTER: {{ selectedFilter }}</h1>
     <div class="cards-container">
@@ -25,23 +27,52 @@ export default {
   components: {
     product
   },
-  computed: {
-    products() {
-      let products = [];
-      productItems.forEach(product => {
-        if (this.selectedFilter == "all") {
-          products.push(product);
-        }
-      });
-
-      return products;
-    }
-  },
   data() {
     return {
+      products: [],
       select: "all",
-      selectedFilter: "all"
+      selectedFilter: "all",
+      searchTitle: "",
+      searchPrice: ""
     };
+  },
+
+  methods: {
+    getProducts() {
+      // let products = [];
+      // let sortedProducts = productItems.sort((a, b) => Number(a.order) - Number(b.order));
+      var filter = {
+        price: 100,
+        purchased: true
+      };
+
+      this.products = productItems.filter(item => {
+        for (let key in filter) {
+          console.log(item[key] + "=" + filter[key]);
+          if (item[key] === undefined || item[key] != filter[key]) return false;
+        }
+        return true;
+      });
+
+      // console.log(this.searchPrice)
+      // this.products = productItems
+      //                 .filter(product => product.price == this.searchPrice)
+      //                 .sort((a, b) => Number(a.order) - Number(b.order));
+
+      // sortedProducts.forEach(product => {
+      //   if (this.selectedFilter == "all") {
+      //     this.products.push(product);
+      //   } else if (product.title.includes(this.searchTitle)) {
+      //     this.products.push(product);
+      //   }
+      // });
+    },
+    searchTitleMethod() {
+      this.getProducts();
+    }
+  },
+  created() {
+    this.getProducts();
   },
   watch: {
     select: function(oldVal, newVal) {

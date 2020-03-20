@@ -8,8 +8,13 @@
       <div class="card-body">
         <div class="card-text">
           <div class="title">{{ product ? product.title : "" }}</div>
-          <div class="price">{{ product.price | formatNumber }}</div>
-          <div class="discount" v-if="product.discount">
+          <div :class="isDiscount ? 'discount' : 'price'">
+            {{ product.price | formatNumber }}
+          </div>
+          <div
+            :class="isDiscount ? 'price' : 'discount'"
+            v-if="product.discount"
+          >
             {{ this.discountedPrice(product) | formatNumber }}
           </div>
           <div class="description">
@@ -34,12 +39,15 @@ export default {
     product: Object
   },
   data() {
-    return {};
+    return {
+      isDiscount: false
+    };
   },
   computed: {},
   methods: {
     discountedPrice(product) {
       if (product.discount) {
+        this.isDiscount = true;
         return (
           product.price - (product.price * product.discount.slice(0, -1)) / 100
         );
@@ -85,22 +93,25 @@ img {
   transition: 0.5s ease;
   backface-visibility: hidden;
 }
-span {
+.title {
   display: block;
   font-weight: 600;
 }
 .card-image img {
-  height: 50%;
   width: 50%;
+  height: 60%;
   border-radius: 50%;
+  margin-left: auto;
 }
 .discount {
   display: inline;
-  font-size: 17px;
+  font-size: 12px;
+  text-decoration: line-through;
+  color: red;
 }
 .price {
   display: inline;
-  font-size: 10px;
+  font-weight: 600;
 }
 .description {
   display: block;
